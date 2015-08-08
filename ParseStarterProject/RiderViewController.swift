@@ -42,6 +42,12 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate,MKMapView
 
     }
 
+    func displayAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+
 
     //MARK: Cllocation delegate methods
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -60,14 +66,61 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate,MKMapView
 
     func addPin(location: CLLocationCoordinate2D) {
         self.mapView.removeAnnotations(mapView.annotations)
-        var pinLocation : CLLocationCoordinate2D = CLLocationCoordinate2DMake(location.latitude,location.longitude)
-        var objectAnnotation = MKPointAnnotation()
+        let pinLocation : CLLocationCoordinate2D = CLLocationCoordinate2DMake(location.latitude,location.longitude)
+        let objectAnnotation = MKPointAnnotation()
         objectAnnotation.coordinate = pinLocation
         objectAnnotation.title = "Your location"
         self.mapView.addAnnotation(objectAnnotation)
     }
-
+    var riderRequestActive = false
+    @IBOutlet weak var callUberButton: UIButton!
     //MARK: Actions
-    @IBAction func onCallUberTapped(sender: UIButton) {
+    @IBAction func onCallUberTapped(sender: UIButton)
+    {
+        if riderRequestActive == false
+        {
+            let request = PFObject(className:"riderRequest")
+            request["username"] = PFUser.currentUser()?.username
+            let requestLocation: CLLocationCoordinate2D = (manager.location?.coordinate)!
+            let point = PFGeoPoint(latitude:requestLocation.latitude, longitude:requestLocation.longitude)
+            request["location"] = point
+            request.saveInBackgroundWithBlock
+                {
+                (success: Bool, error: NSError?) -> Void in
+                if (success)
+                {
+                    print("Check parse")
+                    self.callUberButton.setTitle("cancel uber", forState: UIControlState.Normal)
+                } else
+                {
+                    let errorMessage = error?.description
+                    self.displayAlert("Oh no!", message: errorMessage!)
+                }
+            }
+            riderRequestActive = true
+        } else {
+            self.callUberButton.setTitle("Request uber", forState: UIControlState.Normal)
+            let query = PFQuery(className: "riderRequest")
+            riderRequestActive = false
+            query.whereKey("username", equalTo: (PFUser.currentUser()?.username)!)
+            query.findObjectsInBackgroundWithBlock
+                {
+                    (objects: [AnyObject]?, error: NSError?) -> Void in
+                    if error == nil
+                    {
+                        // Do something with the found objects
+                        if let objects = objects as? [PFObject] {
+                            for object in objects
+                            {
+                                object.deleteInBackground()
+                            }
+                        }
+                    } else {
+                        // Log details of the failure
+                    }
+            }
+        }
     }
+
+
 }

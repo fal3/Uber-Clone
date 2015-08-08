@@ -172,6 +172,7 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="callUberButton" destination="UaI-cS-8mP" id="m7X-7q-i39"/>
                         <outlet property="mapView" destination="RG1-TM-6LP" id="rkX-a0-VnQ"/>
                     </connections>
                 </viewController>

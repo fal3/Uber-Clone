@@ -10,10 +10,10 @@ import Bolts
 import Parse
 
 // If you want to use any of the UI components, uncomment this line
-// import ParseUI
+import ParseUI
 
 // If you want to use Crash Reporting - uncomment this line
-// import ParseCrashReporting
+import ParseCrashReporting
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
