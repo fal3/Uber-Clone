@@ -50,16 +50,24 @@ class ViewController: UIViewController ,UITextFieldDelegate {
                     }
                 } else {
                     print("success")
-                    self.performSegueWithIdentifier("loginRider", sender: self)
+                    if self.`switch`.on == true {
+                        self.performSegueWithIdentifier("loginDriver", sender: self)
+                    } else {
+                        self.performSegueWithIdentifier("loginRider", sender: self)
+                    }
                 }
             }
         } else {
             PFUser.logInWithUsernameInBackground(usernameTextField.text!, password:passwordTextField.text!) {
                 (user: PFUser?, error: NSError?) -> Void in
                 if user != nil {
-                    print("logged in")
-                    self.performSegueWithIdentifier("loginRider", sender: self)
-                    // Do stuff after successful login.
+                    if let user = user{
+                        if user["isDriver"] as! Bool == true {
+                            self.performSegueWithIdentifier("loginDriver", sender: self)
+                        } else {
+                            self.performSegueWithIdentifier("loginRider", sender: self)
+                        }
+                    }
                 } else {
                     if let errorString = error!.userInfo["error"] as? String {
                         self.displayAlert("Error", message: errorString)
@@ -120,8 +128,11 @@ class ViewController: UIViewController ,UITextFieldDelegate {
 
     override func viewDidAppear(animated: Bool) {
         if PFUser.currentUser()?.username != nil {
-
-            self.performSegueWithIdentifier("loginRider", sender: self)
+            if PFUser.currentUser()?["isDriver"] as! Bool {
+                self.performSegueWithIdentifier("loginDriver", sender: self)
+            } else {
+                self.performSegueWithIdentifier("loginRider", sender: self)
+            }
         }
     }
     
