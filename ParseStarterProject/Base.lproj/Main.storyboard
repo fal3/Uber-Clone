@@ -171,6 +171,9 @@
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="mapView" destination="RG1-TM-6LP" id="rkX-a0-VnQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v80-Xx-jHz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
