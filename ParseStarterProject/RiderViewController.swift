@@ -39,7 +39,6 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate,MKMapView
         manager.requestWhenInUseAuthorization()
         manager.requestAlwaysAuthorization()
         manager.startUpdatingLocation()
-
     }
 
     func displayAlert(title: String, message: String) {
